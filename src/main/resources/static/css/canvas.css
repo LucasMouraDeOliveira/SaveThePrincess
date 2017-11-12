@@ -1,0 +1,17 @@
+#gameCanvas {
+	width: 640px;
+	height: 640px;
+	box-sizing: border-box;
+	border: 1px solid black;
+	margin: auto;
+	
+	position:absolute; /*it can be fixed too*/
+    left:0; right:0;
+    top:0; bottom:0;
+
+    /*this to solve "the content will not be cut when the window is smaller than the content": */
+    max-width:100%;
+    max-height:100%;
+    overflow:auto;
+	
+}

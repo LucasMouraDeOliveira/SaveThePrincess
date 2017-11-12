@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1"></meta>
+<title>Header</title>
+</head>
+<body>
+
+	<div id="header" th:fragment="header">
+		<button onclick="location.href='/'">Main page</button>
+		<!-- if not connected -->
+		<button onclick="location.href='/login';">Log in</button>
+		<button onclick="location.href='/signin';">Sign in</button>
+		<!-- if connected -->
+		<button onclick="location.href='/game'">Join a server</button>
+		<!-- <button>Create a server</button>
+		<button>Disconnect</button> -->
+	</div>
+
+</body>
+</html>
