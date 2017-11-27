@@ -14,12 +14,16 @@ public class UserService implements IUserService {
 	
 	@Override
 	public User findUserByLogin(String login) {
-		return userDAO.findByName(login);
+		return this.userDAO.findByName(login);
 	}
 
 	@Override
 	public void insertUser(User user) {
-		this.userDAO.insert(user);
+		this.userDAO.save(user);
+	}
+
+	public User findUser(Integer playerId) {
+		return this.userDAO.find(playerId);
 	}
 
 }
