@@ -16,6 +16,7 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.lordkadoc.entities.Role;
 import com.lordkadoc.entities.User;
 
 @Configuration
@@ -50,7 +51,7 @@ public class HibernateConfig {
 		props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
 
 		factoryBean.setHibernateProperties(props);
-		factoryBean.setAnnotatedClasses(User.class);
+		factoryBean.setAnnotatedClasses(User.class, Role.class);
 		return factoryBean;
 	}
 

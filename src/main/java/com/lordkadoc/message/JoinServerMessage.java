@@ -2,16 +2,16 @@ package com.lordkadoc.message;
 
 public class JoinServerMessage {
 	
-	private int playerId;
+	private String playerToken;
 	
 	private int serverId;
 	
-	public int getPlayerId() {
-		return playerId;
+	public String getPlayerToken() {
+		return playerToken;
 	}
 	
-	public void setPlayerId(int playerId) {
-		this.playerId = playerId;
+	public void setPlayerToken(String playerToken) {
+		this.playerToken= playerToken;
 	}
 	
 	public int getServerId() {

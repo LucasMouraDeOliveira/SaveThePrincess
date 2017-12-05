@@ -11,6 +11,11 @@ public class IndexController {
 		return "index";
 	}
 	
+	@RequestMapping("/login")
+	public String login() {
+		return "login";
+	}
+	
 	@RequestMapping("/game")
 	public String game() {
 		return "game";

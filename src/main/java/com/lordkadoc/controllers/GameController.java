@@ -27,7 +27,7 @@ public class GameController {
 	@MessageMapping("/join")
 	public void joinGame(JoinServerMessage message) {
 		if(message != null) {
-			boolean success = this.serverManager.joinServer(message.getServerId(), message.getPlayerId());
+			boolean success = this.serverManager.joinServer(message.getServerId(), message.getPlayerToken());
 			if(success) {
 				this.send("joinOk", null);
 			}

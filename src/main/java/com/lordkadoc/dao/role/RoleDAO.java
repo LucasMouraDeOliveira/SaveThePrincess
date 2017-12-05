@@ -1,5 +1,4 @@
-package com.lordkadoc.dao.users;
-
+package com.lordkadoc.dao.role;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -10,26 +9,27 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lordkadoc.dao.DAOUtil;
+import com.lordkadoc.entities.Role;
 import com.lordkadoc.entities.User;
 
 @Repository
 @Transactional
-public class UserDAO extends DAOUtil<User> {
+public class RoleDAO extends DAOUtil<Role> {
 	
-	public UserDAO() {
-		super(User.class);
+	public RoleDAO() {
+		super(Role.class);
 	}
-	
-	public User findByLogin(String login) {
+
+	public Role findRole(String roleName) {
 		Session session = this.sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		Criteria criteria = session.createCriteria(User.class);
-		User user = (User) criteria.add(Restrictions.eq("login", login)).uniqueResult();
+		Criteria criteria = session.createCriteria(Role.class);
+		Role role = (Role) criteria.add(Restrictions.eq("role", roleName)).uniqueResult();
 		if (tx.getStatus().equals(TransactionStatus.ACTIVE)) { 
 			tx.commit();
 		}
 		session.close();
-		return user;
+		return role;
 	}
 
 }

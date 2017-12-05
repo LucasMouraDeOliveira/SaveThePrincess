@@ -25,7 +25,7 @@ function send(route, data) {
 }
 
 /**
- * "Abonne" la socket à une route pour qu'elle recoive les message à destination de cette route.
+ * "Abonne" la socket à une route pour qu'elle reçoive les messages à destination de cette route.
  * 
  * @param route la route d'accès aux messages
  * @param handler la méthode appelée lorqu'un message est reçu sur la route
@@ -33,6 +33,10 @@ function send(route, data) {
 function subscribe(route, handler) {
 	stompClient.subscribe(CLIENT_MESSAGE_ADDRESS + "/" + route, handler === null ? onMessage : handler);
 }
+
+function subscribeToQueue(handler) {
+	stompClient.subscribe('/user/queue/messages', handler);
+} 
 
 function update(data) {
 	send("update", data);

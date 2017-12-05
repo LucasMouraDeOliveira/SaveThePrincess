@@ -1,6 +1,8 @@
 package com.lordkadoc.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +28,21 @@ public class ServerManager {
 		this.serverMaxId = 0;
 	}
 	
-	public boolean joinServer(Integer serverId, Integer playerId) {
+	public boolean joinServer(Integer serverId, String playerToken) {
 		System.out.println("trying to join server");
 		Server server = this.getServer(serverId);
 		if(server == null)
 			return false;
 		System.out.println("server id is valid");
-		User user = this.userService.findUser(playerId);
+		/*User user = this.userService.findUserByToken(playerToken);
 		if(user == null)
-			return false;
+			return false;*/
 		//TODO rejoindre un serveur et retourner true
 		return false;
+	}
+	
+	public void leaveServer(Integer serverId, String playerToken) {
+		//TODO quitter un serveur
 	}
 	
 	public Integer createServer(String serverName) {
@@ -49,6 +55,12 @@ public class ServerManager {
 	
 	public Server getServer(Integer serverId) {
 		return this.servers.get(serverId);
+	}
+	
+	public List<Server> listServers() {		
+		List<Server> servers = new ArrayList<Server>();
+		servers.addAll(this.servers.values());
+		return servers;
 	}
 	
 }

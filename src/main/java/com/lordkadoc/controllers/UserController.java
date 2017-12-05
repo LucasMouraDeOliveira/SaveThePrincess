@@ -46,8 +46,8 @@ public class UserController {
 			user.setLogin(login);
 			user.setEmail(email);
 			user.setPassword(password);
-			this.userService.insertUser(user);
-			model.setViewName("");
+			this.userService.saveUser(user);
+			model.setViewName("signin");
 		}
 		return model;
 	}
