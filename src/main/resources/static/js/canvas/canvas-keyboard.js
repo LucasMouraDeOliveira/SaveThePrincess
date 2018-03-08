@@ -1,7 +1,12 @@
 /**
  * Stocke l'état des touches du joueur pour la frame courante
  */
-var keyboard = {};
+var keyboard = {
+	up: false,
+	bottom: false,
+	left: false,
+	right: false
+};
 
 /**
  * Code des touches fléchées

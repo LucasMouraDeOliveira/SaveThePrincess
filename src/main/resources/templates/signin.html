@@ -10,15 +10,20 @@
 
 	<p th:text="${error}"></p>
 
-	<form action="signin" method="post">
+	<form action="/signin" method="POST" th:object="${user}" enctype="utf8">
 
-		<label for="login">Login : </label><br /> <input type="text"
-			id="login" name="login" /><br /> <label for="email">Email : </label><br />
-		<input type="text" id="email" name="email" /><br /> <label
-			for="password">Password : </label><br /> <input type="password"
-			id="password" name="password" /><br /> <label for="confirm_password">Confirm
-			password : </label><br /> <input type="password" id="confirm_password"
-			name="confirm_password" /><br />
+		<label for="login">Login : </label>
+		<input th:field="*{login}" />
+		<br /> 
+		<label for="email">Email :</label>
+		<input type="email" th:field="*{email}" />
+		<br /> 
+		<label for="password">Password : </label>
+		<input type="password" th:field="*{password}" />
+		<br /> 
+		<label for="confirm_password">Confirm password : </label>
+		<input type="password" th:field="*{confirmPassword}" />
+		<br />
 		<button>Submit</button>
 
 	</form>

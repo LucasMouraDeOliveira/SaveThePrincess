@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,16 +17,17 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.lordkadoc.entities.Role;
-import com.lordkadoc.entities.User;
+import com.lordkadoc.mvc.entities.Role;
+import com.lordkadoc.mvc.entities.User;
 
 @Configuration
 @PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 @ComponentScans(value = { 
-		@ComponentScan("com.lordkadoc.dao"), 
-		@ComponentScan("com.lordkadoc.services"),
-		@ComponentScan("com.lordkadoc.entities") })
+		@ComponentScan("com.lordkadoc.mvc.dao"), 
+		@ComponentScan("com.lordkadoc.mvc.services"),
+		@ComponentScan("com.lordkadoc.mvc.entities"),
+		@ComponentScan("com.lordkadoc.server")})
 public class HibernateConfig {
 
 	@Autowired
@@ -45,21 +47,22 @@ public class HibernateConfig {
 	public LocalSessionFactoryBean getSessionFactory() {
 		LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
 		factoryBean.setDataSource(getDataSource());
-
-		Properties props = new Properties();
-		props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-		props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-
-		factoryBean.setHibernateProperties(props);
+		factoryBean.setHibernateProperties(getProperties());
 		factoryBean.setAnnotatedClasses(User.class, Role.class);
 		return factoryBean;
 	}
+	
+	public Properties getProperties() {
+		Properties props = new Properties();
+		props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+		props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+		return props;
+	}
 
 	@Bean
-	public HibernateTransactionManager getTransactionManager() {
-		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-		transactionManager.setSessionFactory(getSessionFactory().getObject());
-		return transactionManager;
+	@Autowired
+	public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory) {
+		return new HibernateTransactionManager(sessionFactory);
 	}
 
 }

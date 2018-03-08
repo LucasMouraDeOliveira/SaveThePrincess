@@ -1,6 +1,4 @@
 #gameCanvas {
-	width: 640px;
-	height: 640px;
 	box-sizing: border-box;
 	border: 1px solid black;
 	margin: auto;

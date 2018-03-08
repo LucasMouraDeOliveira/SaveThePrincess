@@ -13,7 +13,10 @@ var loop;
 function startUpdate(delay) {
 	loop = window.setInterval(function() {
 		var updatedData = getUpdatedData();
-		stompClient.send(updatedData);
+		//On ajoute l'id du serveur 
+		//pour que le manager sache vers quel serveur rediriger
+		updatedData.serverId = serverId;
+		send("update", updatedData);
 	}, delay);
 }
 
@@ -25,12 +28,12 @@ function stopUpdate() {
 }
 
 /**
- * Renvoie l'état des touches et de la souris du joueur au format JSON.
+ * Renvoie l'état des touches et de la souris du joueur.
  * 
- * @returns un objet JSON contenant les inputs du joueur pour la frame courante
+ * @return un objet contenant les inputs du joueur pour la frame courante
  */
 function getUpdatedData() {
 	message.keyboard = keyboard;
 	message.mouse = mouse;
-	return JSON.stringify(message);
+	return message;
 }

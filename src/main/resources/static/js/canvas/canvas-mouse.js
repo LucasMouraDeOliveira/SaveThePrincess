@@ -1,7 +1,10 @@
 /**
  * Stocke l'état de la souris du joueur pour la frame courante
  */
-var mouse = {};
+var mouse = {
+	left: false,
+	right: false
+};
 
 /**
  * Codes des boutons de la souris
