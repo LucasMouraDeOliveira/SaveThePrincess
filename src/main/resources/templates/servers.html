@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1"/>
+<title>Available servers</title>
+</head>
+<body>
+
+	<div id="header-index" th:replace="header :: header"></div>
+	
+	<h1>Servers :</h1>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Server name</th>
+				<th>Capacity</th>
+				<th></th>
+			</tr>
+		</thead>
+		<th:block th:each="server : ${servers}">
+			<tr>
+				<td th:text="${server.name}"></td>
+				<td th:text="${server.playerCount + '/' + server.maxPlayers}"></td>
+				<td>
+					<form th:action="@{/joinGame}" method="post">
+						<input type="hidden" name="serverName" id="serverName" th:value="${server.name}" />
+						<button>Join</button>
+					</form>
+				</td>
+			</tr>
+		</th:block>
+	</table>
+
+</body>
+</html>

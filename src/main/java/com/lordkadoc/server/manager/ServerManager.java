@@ -1,6 +1,8 @@
 package com.lordkadoc.server.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.json.JsonObject;
@@ -41,20 +43,22 @@ public class ServerManager {
 //		//TODO quitter un serveur
 //	}
 	
-	public boolean createServer(String serverName) {
+	public boolean createServer(String serverName, int maxPlayers) {
 		if(this.servers.get(serverName) != null) {
 			return false;
 		}
-		Server server = new Server(serverName);
+		Server server = new Server(serverName, maxPlayers);
+		//TODO mettre à un autre endroit
 		this.servers.put(serverName, server);
+		this.startServer(serverName);
 		return true;
 	}
 
-	public void addPlayerToServer(WebSocketSession session, String playerName, String serverName) {
+	public boolean addPlayerToServer(WebSocketSession session, String playerName, String serverName) {
 		Server server = this.servers.get(serverName);
 		if(server == null)
-			return;
-		server.addPlayer(session, playerName);
+			return false;
+		return server.addPlayer(session, playerName);
 	}
 	
 	public void startServer(String serverName) {
@@ -64,17 +68,19 @@ public class ServerManager {
 		}
 	}
 	
-	public void sendUpdate(WebSocketSession session, String serverId, JsonObject data) {
-		Server server = this.servers.get(serverId); 
+	public void sendUpdate(WebSocketSession session, String serverName, JsonObject data) {
+		Server server = this.servers.get(serverName); 
 		if(server != null) {
 			server.sendUpdate(session, data);
 		}
 	}
 	
-//	public List<Server> listServers() {		
-//		List<Server> servers = new ArrayList<Server>();
-//		servers.addAll(this.servers.values());
-//		return servers;
-//	}
+	public List<ServerInfo> listServers() {		
+		List<ServerInfo> serverInfos = new ArrayList<ServerInfo>();
+		for(Server server : this.servers.values()) {
+			serverInfos.add(new ServerInfo(server.getName(), 1, 10));
+		}
+		return serverInfos;
+	}
 	
 }

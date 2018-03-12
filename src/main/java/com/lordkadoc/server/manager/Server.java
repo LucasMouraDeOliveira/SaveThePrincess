@@ -1,44 +1,51 @@
 package com.lordkadoc.server.manager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import com.badlogic.ashley.core.Entity;
 import com.lordkadoc.server.game.Game;
-import com.lordkadoc.server.game.engine.component.PositionComponent;
-import com.lordkadoc.server.game.engine.system.Mapper;
-import com.lordkadoc.server.game.map.Cell;
-import com.lordkadoc.server.game.map.GameMap;
+import com.lordkadoc.server.game.factory.UpdateFactory;
 
 public class Server implements Observer {
 	
 	private String name;
 	
+	private int maxPlayers;
+	
 	private Game game;
+	
+	private UpdateFactory updateFactory;
 	
 	private Map<WebSocketSession, String> players;
 	
-	public Server(String name) {
+	public Server(String name, int maxPlayers) {
 		this.name = name;
+		this.maxPlayers = maxPlayers;
 		this.players = new HashMap<WebSocketSession, String>();
 		this.game = new Game();
 		this.game.addObserver(this);
+		this.updateFactory = new UpdateFactory(game);
 	}
 
 	public boolean addPlayer(WebSocketSession session, String playerName) {
+		
+		//On vérifie que la limite de joueurs n'est pas atteinte
+		if(this.maxPlayers <= this.players.size()) {
+			return false;
+		}
+		
+		//On essaie d'ajouter le joueur à la partie
 		boolean playerAccepted = this.game.addPlayer(playerName);
 		if(!playerAccepted) {
 			return false;
@@ -53,36 +60,17 @@ public class Server implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		JsonArrayBuilder entitiesBuilder = Json.createArrayBuilder();
-		JsonArrayBuilder cellsBuilder = Json.createArrayBuilder();
-		JsonObjectBuilder entityBuilder;
-		JsonObjectBuilder cellBuilder;
-		List<Entity> entities = this.game.getEntities();
-		PositionComponent positionComponent;
-		for(Entity entity : entities) {
-			positionComponent = Mapper.positionMapper.get(entity);
-			entityBuilder = Json.createObjectBuilder();
-			entityBuilder.add("x", positionComponent.getX());
-			entityBuilder.add("y", positionComponent.getY());
-			entitiesBuilder.add(entityBuilder.build());
-		}
-		GameMap gameMap = this.game.getGameMap();
-		Cell[][] cells = gameMap.getCells();
-		Cell cell;
-		for (int i = 0; i < cells.length; i++) {
-			for (int j = 0; j < cells.length; j++) {
-				cell = cells[i][j];
-				cellBuilder = Json.createObjectBuilder();
-				cellBuilder.add("x", cell.getX());
-				cellBuilder.add("y", cell.getY());
-				cellsBuilder.add(cellBuilder.build());
+		
+		//On récupère les données
+		Map<String, JsonObject> updates = this.updateFactory.getUpdateForPlayers(new ArrayList<String>(this.players.values()));
+		JsonObject update;
+		
+		//On envoie les données aux clients
+		for(Map.Entry<WebSocketSession, String> sessionEntry : this.players.entrySet()) {
+			update = updates.get(sessionEntry.getValue());
+			if(update != null) {
+				this.sendMessageAsynchronously(sessionEntry.getKey(), "update", update);
 			}
-		}
-		builder.add("map", cellsBuilder.build());
-		builder.add("entities", entitiesBuilder.build());
-		for(WebSocketSession session : this.players.keySet()) {
-			this.sendMessageAsynchronously(session, "update", builder.build());
 		}
 	}
 	
@@ -111,6 +99,14 @@ public class Server implements Observer {
 		if(playerName != null) {
 			this.game.processPlayerInput(playerName, data);
 		}
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int getMaxPlayers() {
+		return maxPlayers;
 	}
 	
 }

@@ -15,7 +15,7 @@ public class MovementSystem extends EntitySystem {
 	
 	@Override
 	public void addedToEngine(Engine engine) {
-		this.entities = engine.getEntitiesFor(Family.all(PositionComponent.class, MovementComponent.class).get());
+		this.entities = engine.getEntitiesFor(Family.all(MovementComponent.class).get());
 	}
 	
 	@Override
@@ -24,7 +24,9 @@ public class MovementSystem extends EntitySystem {
 		PositionComponent entityPosition;
 		MovementComponent entityMovement;
 		SpeedComponent speedComponent;
+		
 		for(Entity entity : entities) {
+			
 			entityPosition = Mapper.positionMapper.get(entity);
 			entityMovement = Mapper.movementMapper.get(entity);
 			speedComponent = Mapper.speedMapper.get(entity);

@@ -6,19 +6,20 @@ var socket;
 /**
  * Identifiant du serveur sur lequel le joueur est connecté
  */
-var serverId;
+var server;
 
 /**
- * Connecte le client au serveur via une websocket
+ * Connecte le client à un serveur de jeu via une websocket
  */
-function connect() {
+function connect(serverName, playerName) {
+	server = serverName;
 	socket = new WebSocket("ws://localhost:8080/websocket-game")
 	socket.onmessage = onMessage;
 	socket.onopen = function() {
 		var data = new Object();
-		serverId = "Serveur de test " + (Math.random()*9999);
-		data.serverName = serverId;
-		send("create-server", data);
+		data.serverName = serverName;
+		data.playerName = playerName;
+		send("join-server", data);
 	}
 }
 
@@ -40,7 +41,7 @@ function onMessage(message) {
 	console.log(type);
 	if(type === "update") {
 		updateCanvas(json.data);
-	} else if(type === "create-server-success") {
+	} else if(type === "join-server-success") {
 		startUpdate(50);
 	}
 }

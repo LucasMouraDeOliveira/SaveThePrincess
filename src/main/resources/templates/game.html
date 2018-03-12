@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1"></meta>
 <title>Game</title>
@@ -18,6 +18,11 @@
 <script type="text/javascript" src="js/socket/socket-init.js"></script>
 </head>
 <body>
+
+	<div id="header-index" th:replace="header :: header"></div>
+	
+	<input type="hidden" id="server-name" th:value="${serverName}"/>
+	<input type="hidden" id="player-name" th:value="${playerName}"/>
 
 	<canvas id="gameCanvas" width="500" height="500">
 	

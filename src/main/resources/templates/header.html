@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1"></meta>
+<!-- CSS -->
+<link rel="stylesheet" href="css/global.css" />
 <title>Header</title>
 </head>
 <body>
@@ -12,9 +14,8 @@
 		<button onclick="location.href='/login';">Log in</button>
 		<button onclick="location.href='/signin';">Sign in</button>
 		<!-- if connected -->
-		<button onclick="location.href='/game'">Create a server</button>
-		<!-- <button>Create a server</button>
-		<button>Disconnect</button> -->
+		<button onclick="location.href='/createGame'">Create a server</button>
+		<button onclick="location.href='/servers'">Join a server</button>
 	</div>
 
 </body>

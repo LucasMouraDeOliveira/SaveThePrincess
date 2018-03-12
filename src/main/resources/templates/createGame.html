@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1" />
+<title>Create server</title>
+</head>
+<body>
+
+	<div id="header-index" th:replace="header :: header"></div>
+
+	<form th:action="@{/game}" method="post">
+	
+		<label for="serverName">Nom du serveur : </label><br /> 
+		<input type="text" id="serveName" name="serverName" />
+		<br />
+		<label for="maxPlayers">Nombre de joueurs : </label>
+		<input type="number" id="maxPlayers" name="maxPlayers" />
+		
+		<button>Create</button>
+	
+	</form>
+
+</body>
+</html>

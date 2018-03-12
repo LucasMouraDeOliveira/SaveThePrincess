@@ -13,9 +13,9 @@ var loop;
 function startUpdate(delay) {
 	loop = window.setInterval(function() {
 		var updatedData = getUpdatedData();
-		//On ajoute l'id du serveur 
+		//On ajoute le nom du serveur 
 		//pour que le manager sache vers quel serveur rediriger
-		updatedData.serverId = serverId;
+		updatedData.serverName = server;
 		send("update", updatedData);
 	}, delay);
 }

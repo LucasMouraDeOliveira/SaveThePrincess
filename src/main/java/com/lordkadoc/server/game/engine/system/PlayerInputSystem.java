@@ -7,14 +7,15 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.lordkadoc.server.game.engine.component.InputComponent;
 import com.lordkadoc.server.game.engine.component.MovementComponent;
+import com.lordkadoc.server.game.engine.component.PlayerComponent;
 
-public class InputSystem extends EntitySystem {
+public class PlayerInputSystem extends EntitySystem {
 	
 	private ImmutableArray<Entity> entities;
 	
 	@Override
 	public void addedToEngine(Engine engine) {
-		this.entities = engine.getEntitiesFor(Family.all(InputComponent.class, MovementComponent.class).get());
+		this.entities = engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
 	}
 	
 	@Override
@@ -22,6 +23,7 @@ public class InputSystem extends EntitySystem {
 		
 		MovementComponent entityMovement;
 		InputComponent entityInput;
+		
 		for(Entity entity : entities) {
 			entityMovement = Mapper.movementMapper.get(entity);
 			entityInput = Mapper.inputMapper.get(entity);

@@ -39,6 +39,16 @@ function loadImages() {
 		images.set("knight", imgKnight);
 	}
 	imgKnight.src = "img/knight.png";
+	var imgFloor = new Image();
+	imgFloor.onload = function() {
+		images.set("floor", imgFloor);
+	}
+	imgFloor.src = "img/floor.png";
+	var imgWall = new Image();
+	imgWall.onload = function() {
+		images.set("wall", imgWall);
+	}
+	imgWall.src = "img/wall-top.png";
 }
 
 /**
@@ -50,11 +60,22 @@ function updateCanvas(data) {
 	//On efface l'écran
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	//on dessine la map
+	var cells = data.map;
+	for(var i in cells) {
+		var cell = cells[i];
+		ctx.drawImage(images.get("floor"), cell.x * 64, cell.y * 64);
+		if(cell.obstacle !== undefined && cell.obstacle !== null) {
+			ctx.drawImage(images.get("wall"), cell.x*64, cell.y * 64);
+		}
+	}
 	//On dessine les entités
-	var entities = data.entities;
-	for(var i in entities) {
-		var entity = entities[i];
-		ctx.drawImage(images.get("knight"), entity.x, entity.y);
+	var players = data.players;
+	for(var i in players) {
+		var player = players[i];
+		ctx.textAlign = "center";
+		ctx.fillText(player.name, player.x + 25, player.y);
+		ctx.drawImage(images.get("knight"), player.x, player.y);
 	}
 }
 

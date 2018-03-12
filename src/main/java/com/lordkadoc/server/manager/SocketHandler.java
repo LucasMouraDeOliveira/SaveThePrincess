@@ -27,19 +27,17 @@ public class SocketHandler extends TextWebSocketHandler {
 		JsonObject object = jsonReader.readObject();
 		JsonObject data = object.getJsonObject("data");
 		String action = object.getString("action");
-		if("create-server".equals(action)) {
+		if("join-server".equals(action)) {
 			String serverName = data.getString("serverName");
-			if(this.serverManager.createServer(serverName)) {
-				this.serverManager.addPlayerToServer(session, "Player 1", serverName);
-				this.serverManager.startServer(serverName);
-				this.sendMessage(session, "create-server-success", "The creation of server " + serverName + " succeeded");
+			String playerName = data.getString("playerName");
+			if(this.serverManager.addPlayerToServer(session, playerName, serverName)) {
+				this.sendMessage(session, "join-server-success", "Joining server " + serverName + " succeeded");
 			} else {
-				this.sendMessage(session, "create-server-failure", "The creation of server " + serverName + " failed");
+				this.sendMessage(session, "join-server-failure", "Joining server " + serverName + " failed");
 			}
 		} else if("update".equals(action)) {
-			//TODO send update to server
-			String serverId = data.getString("serverId");
-			serverManager.sendUpdate(session, serverId, data);
+			String serverName = data.getString("serverName");
+			serverManager.sendUpdate(session, serverName, data);
 		}
 	}
 	
