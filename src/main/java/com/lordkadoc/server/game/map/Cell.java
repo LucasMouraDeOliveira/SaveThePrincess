@@ -1,14 +1,14 @@
 package com.lordkadoc.server.game.map;
 
-import com.badlogic.ashley.core.Entity;
-
 public class Cell {
 	
 	private int x;
 	
 	private int y;
 	
-	private Entity entity;
+	private int floorTexture;
+	
+	private int wallTexture;
 	
 	public Cell(int x, int y) {
 		this.x = x;
@@ -30,17 +30,25 @@ public class Cell {
 	public void setY(int y) {
 		this.y = y;
 	}
-
-	public Entity getEntity() {
-		return entity;
+	
+	public int getFloorTexture() {
+		return floorTexture;
 	}
 	
-	public void setEntity(Entity entity) {
-		this.entity = entity;
+	public void setFloorTexture(int floorTexture) {
+		this.floorTexture = floorTexture;
+	}
+	
+	public int getWallTexture() {
+		return wallTexture;
+	}
+	
+	public void setWallTexture(int wallTexture) {
+		this.wallTexture = wallTexture;
 	}
 	
 	public boolean isEmpty() {
-		return this.entity == null;
+		return this.wallTexture == 0;
 	}
 	
 }

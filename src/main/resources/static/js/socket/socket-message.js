@@ -38,7 +38,7 @@ function send(action, data) {
 function onMessage(message) {
 	var json = JSON.parse(message.data);
 	var type = json.type;
-	console.log(type);
+	//console.log(type);
 	if(type === "update") {
 		updateCanvas(json.data);
 	} else if(type === "join-server-success") {

@@ -33,13 +33,13 @@ public class Game extends Observable {
 	
 	public Game() {
 		this.players = new HashMap<String, Entity>();
-		this.gameMap = GameMapFactory.createEmptyGameMap(10, 10);
+		this.gameMap = GameMapFactory.createEmptyGameMap(100, 100);
 	}
 	
 	private void initEngine() {
 		this.engine = new Engine();
 		this.engine.addSystem(new PlayerInputSystem());
-		this.engine.addSystem(new MovementSystem());
+		this.engine.addSystem(new MovementSystem(this));
 	}
 	
 	private void startGameLoop() {

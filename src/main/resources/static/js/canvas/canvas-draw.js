@@ -14,6 +14,11 @@ var ctx;
 var images;
 
 /**
+ * la taille en pixels d'une case à l'écran
+ */
+var CELL_SIZE = 32;
+
+/**
  * Initialise le canvas
  */
 function loadCanvas() {
@@ -34,21 +39,32 @@ function loadCanvas() {
  */
 function loadImages() {
 	images = new Map();
-	var imgKnight = new Image();
-	imgKnight.onload = function() {
-		images.set("knight", imgKnight);
+	loadCharacterImages();
+	loadFloorImages();
+	loadWallImages();
+}
+
+function loadCharacterImages() {
+	loadImage("knight", "knight.png");
+}
+
+function loadFloorImages() {
+	loadImage("floor1", "floor/wooden_floor_top_left.png");
+}
+
+function loadWallImages() {
+	loadImage("wall1", "wall/stone_wall_front_left.png");
+	loadImage("wall2", "wall/stone_wall_front_right.png");
+	loadImage("wall3", "wall/stone_wall_vertical_top.png");
+	loadImage("wall4", "wall/stone_wall_vertical_bottom.png");
+}
+
+function loadImage(alias, src) {
+	var img = new Image();
+	img.onload = function() {
+		images.set(alias, img);
 	}
-	imgKnight.src = "img/knight.png";
-	var imgFloor = new Image();
-	imgFloor.onload = function() {
-		images.set("floor", imgFloor);
-	}
-	imgFloor.src = "img/floor.png";
-	var imgWall = new Image();
-	imgWall.onload = function() {
-		images.set("wall", imgWall);
-	}
-	imgWall.src = "img/wall-top.png";
+	img.src = "img/"+src;
 }
 
 /**
@@ -58,24 +74,47 @@ function loadImages() {
  */
 function updateCanvas(data) {
 	//On efface l'écran
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	
+	//on récupère les infos du joueur
+	var ownPlayer = data.ownPlayer;
+	var offsetX = ownPlayer.x - (canvas.width/2);
+	var offsetY = ownPlayer.y - (canvas.height/2);
+	
+	//on bloque l'offset sur les bords de la map
+	offsetX = Math.max(offsetX, 0);
+	offsetY = Math.max(offsetY, 0);
+	offsetX = Math.min(offsetX, (data.width-canvas.width));
+	offsetY = Math.min(offsetY, (data.height-canvas.height));
+	
 	//on dessine la map
 	var cells = data.map;
 	for(var i in cells) {
 		var cell = cells[i];
-		ctx.drawImage(images.get("floor"), cell.x * 64, cell.y * 64);
-		if(cell.obstacle !== undefined && cell.obstacle !== null) {
-			ctx.drawImage(images.get("wall"), cell.x*64, cell.y * 64);
+		var floor = cell.floor;
+		if(cell.floor !== undefined && cell.floor !== 0) {
+			ctx.drawImage(images.get("floor"+cell.floor), (cell.x * CELL_SIZE) - offsetX, (cell.y * CELL_SIZE) - offsetY);
+		}
+		var wall = cell.wall;
+		if(cell.wall !== undefined && cell.wall !== 0) {
+			ctx.drawImage(images.get("wall"+cell.wall), (cell.x*CELL_SIZE) - offsetX, (cell.y * CELL_SIZE) - offsetY);
 		}
 	}
+	
+	//On dessine le joueur
+	ctx.fillStyle = "white";
+	ctx.textAlign = "center";
+	ctx.fillText(ownPlayer.name, (ownPlayer.x) - offsetX, (ownPlayer.y-25) - offsetY);
+	ctx.drawImage(images.get("knight"), (ownPlayer.x-25) - offsetX, (ownPlayer.y-25) - offsetY);
+	
 	//On dessine les entités
 	var players = data.players;
 	for(var i in players) {
 		var player = players[i];
 		ctx.textAlign = "center";
-		ctx.fillText(player.name, player.x + 25, player.y);
-		ctx.drawImage(images.get("knight"), player.x, player.y);
+		ctx.fillText(player.name, (player.x) - offsetX, (player.y-25) - offsetY);
+		ctx.drawImage(images.get("knight"), (player.x-25) - offsetX, (player.y-25) - offsetY);
 	}
 }
 

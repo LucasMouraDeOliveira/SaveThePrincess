@@ -14,7 +14,6 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.lordkadoc.server.game.Game;
 import com.lordkadoc.server.game.engine.component.PlayerComponent;
 import com.lordkadoc.server.game.engine.component.PositionComponent;
-import com.lordkadoc.server.game.engine.component.TextureComponent;
 import com.lordkadoc.server.game.engine.system.Mapper;
 import com.lordkadoc.server.game.map.Cell;
 import com.lordkadoc.server.game.map.GameMap;
@@ -54,38 +53,64 @@ public class UpdateFactory {
 		JsonArrayBuilder cellsBuilder = Json.createArrayBuilder();
 		JsonObjectBuilder playerBuilder;
 		JsonObjectBuilder cellBuilder;
-		TextureComponent textureComponent;
 		
 		PositionComponent positionComponent;
 		PlayerComponent playerComponent;
 		ImmutableArray<Entity> players = this.game.getPlayers();
+		double ownPlayerX = 0;
+		double ownPlayerY = 0;
 		for(Entity player : players) {
-			positionComponent = Mapper.positionMapper.get(player);
 			playerComponent = Mapper.playerMapper.get(player);
+			positionComponent = Mapper.positionMapper.get(player);
 			playerBuilder = Json.createObjectBuilder();
 			playerBuilder.add("x", positionComponent.getX());
 			playerBuilder.add("y", positionComponent.getY());
 			playerBuilder.add("name", playerComponent.getName());
-			playersBuilder.add(playerBuilder.build());
+			//Si c'est le joueur à qui on envoie l'update on ne le met pas dans cette liste
+			if(playerComponent.getName().equals(playerName)) {
+				ownPlayerX = positionComponent.getX();
+				ownPlayerY = positionComponent.getY();
+				builder.add("ownPlayer", playerBuilder.build());
+			} else {
+				playersBuilder.add(playerBuilder.build());
+			}
 		}
 		
 		GameMap gameMap = this.game.getGameMap();
 		Cell[][] cells = gameMap.getCells();
 		Cell cell;
-		for (int i = 0; i < cells.length; i++) {
-			for (int j = 0; j < cells.length; j++) {
+		
+		double minX = ownPlayerX - GameMap.VIEW_RADIUS;
+		minX = Math.max(0, minX);
+		double maxX = minX + GameMap.VIEW_RADIUS * 2;
+		maxX = Math.min(cells.length*GameMap.PIXEL_PER_CELL, maxX);
+		double minY = ownPlayerY - GameMap.VIEW_RADIUS;
+		minY = Math.max(0, minY);
+		double maxY = minY + GameMap.VIEW_RADIUS * 2;
+		maxY = Math.min(cells[0].length*GameMap.PIXEL_PER_CELL, maxY);
+		
+		int minCellX = (int)(minX/GameMap.PIXEL_PER_CELL);
+		int maxCellX = (int)(maxX/GameMap.PIXEL_PER_CELL);
+		int minCellY = (int)(minY/GameMap.PIXEL_PER_CELL);
+		int maxCellY = (int)(maxY/GameMap.PIXEL_PER_CELL);
+		
+		for (int i = minCellX; i < maxCellX; i++) {
+			for (int j = minCellY; j < maxCellY; j++) {
 				cell = cells[i][j];
 				cellBuilder = Json.createObjectBuilder();
 				cellBuilder.add("x", cell.getX());
 				cellBuilder.add("y", cell.getY());
+				//S'il y a un mur, on retourne sa texture
 				if(!cell.isEmpty()) {
-					textureComponent = Mapper.textureMapper.get(cell.getEntity());
-					cellBuilder.add("obstacle", textureComponent.getTextureId());
+					cellBuilder.add("wall", cell.getWallTexture());
 				}
+				cellBuilder.add("floor", cell.getFloorTexture());
 				cellsBuilder.add(cellBuilder.build());
 			}
 		}
 		builder.add("map", cellsBuilder.build());
+		builder.add("width", cells.length*GameMap.PIXEL_PER_CELL);
+		builder.add("height", cells[0].length*GameMap.PIXEL_PER_CELL);
 		builder.add("players", playersBuilder.build());
 		return builder.build();
 	}

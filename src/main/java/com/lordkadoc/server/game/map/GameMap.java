@@ -2,6 +2,10 @@ package com.lordkadoc.server.game.map;
 
 public class GameMap {
 	
+	public final static int PIXEL_PER_CELL = 32;
+	
+	public final static int VIEW_RADIUS = 10 * PIXEL_PER_CELL;
+	
 	private Cell[][] cells;
 	
 	private final int width;
@@ -21,6 +25,17 @@ public class GameMap {
 				this.cells[i][j] = new Cell(i, j);
 			}
 		}
+	}
+	
+	public Cell getCellFromPixelCoordinates(double x, double y) {
+		int pX = (int)x;
+		int pY = (int)y;
+		pX/=PIXEL_PER_CELL;
+		pY/=PIXEL_PER_CELL;
+		if(pX >= 0 && pX < width && pY >= 0 && pY < height) {
+			return this.cells[pX][pY];
+		}
+		return null;
 	}
 
 	public Cell[][] getCells() {
